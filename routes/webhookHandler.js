@@ -12,6 +12,14 @@ router.post('/', (req, res) => {
   // Only handle Insert Appointment for now
   if (intent === 'InsertAppointment') {
     const { name, date, time } = params;
+    const rawTime=time;
+    
+   time = new Date(rawTime).toLocaleTimeString('en-IN', {
+   hour: '2-digit',
+   minute: '2-digit',
+   hour12: true
+    });
+
 
     if (!name || !date || !time) {
       return res.json({
