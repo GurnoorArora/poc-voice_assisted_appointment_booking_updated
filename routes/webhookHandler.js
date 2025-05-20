@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
   const params = req.body.queryResult.parameters;
 
   // Only handle Insert Appointment for now
-  if (intent === 'Insert Appointment') {
+  if (intent === 'InsertAppointment') {
     const { name, date, time } = params;
 
     if (!name || !date || !time) {
