@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
     const { name, date, time } = params;
     const rawTime=time;
     
-   time = new Date(rawTime).toLocaleTimeString('en-IN', {
+   const newtime = new Date(rawTime).toLocaleTimeString('en-IN', {
    hour: '2-digit',
    minute: '2-digit',
    hour12: true
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
       });
     }
 
-    const row = `${name},${date},${time}\n`;
+    const row = `${name},${date},${newtime}\n`;
 
     if (!fs.existsSync(filePath)) {
       fs.writeFileSync(filePath, 'name,date,time\n');
