@@ -11,8 +11,9 @@ router.post('/', (req, res) => {
 
   // Only handle Insert Appointment for now
   if (intent === 'InsertAppointment') {
-    const { name, date, time } = params;
+    const { person, date, time } = params;
     const rawTime=time;
+    const name = person.name;
     
    const newtime = new Date(rawTime).toLocaleTimeString('en-IN', {
    hour: '2-digit',
