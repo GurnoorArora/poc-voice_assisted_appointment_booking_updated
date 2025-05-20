@@ -1,12 +1,13 @@
 const express = require('express');
+const webhookHandler = require('./routes/webhookHandler');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
-
 const insertAppointment=require('./routes/insertAppointment')
 const deleteAppointment=require('./routes/deleteAppointment')
 const updateAppointment=require('./routes/updateAppointment')
 app.use(bodyParser.json());
+app.use('/webhook', webhookHandler);
 app.use('/insertAppointment',insertAppointment)
 app.use('/deleteAppointment',deleteAppointment)
 app.use('/updateAppointment',updateAppointment)
