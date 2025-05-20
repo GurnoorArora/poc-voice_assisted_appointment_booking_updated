@@ -36,6 +36,13 @@ router.post('/', (req, res) => {
       return res.json({
         fulfillmentText: `Appointment booked for ${name} on ${date} at ${time}.`,
       });
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+  if (!err) {
+    console.log("📄 Updated Appointments CSV:\n" + data);
+  }
+});
+
     });
   } else {
     return res.json({
