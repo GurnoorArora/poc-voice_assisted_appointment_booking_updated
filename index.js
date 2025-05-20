@@ -6,7 +6,9 @@ const PORT = 3000;
 const insertAppointment=require('./routes/insertAppointment')
 const deleteAppointment=require('./routes/deleteAppointment')
 const updateAppointment=require('./routes/updateAppointment')
+const viewAppointment = require('./routes/viewAppointment');
 app.use(bodyParser.json());
+app.use('/viewAppointment', viewAppointment);
 app.use('/webhook', webhookHandler);
 app.use('/insertAppointment',insertAppointment)
 app.use('/deleteAppointment',deleteAppointment)
