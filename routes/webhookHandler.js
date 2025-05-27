@@ -21,18 +21,19 @@ router.post('/', (req, res) => {
       minute: '2-digit',
       hour12: true,
     });
+    const defaultEmail = "johndoe@example.com"; // Simulated logged-in user
+
 
     if (!name || !date || !time) {
       return res.json({
         fulfillmentText: 'Missing required details to book an appointment.',
       });
     }
-
-    const row = `${name},${date},${newtime}\n`;
+     const row = `${name},${date},${newtime},${defaultEmail}\n`;
 
     // Create file with header if it doesn't exist
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, 'name,date,time\n');
+      fs.writeFileSync(filePath, 'name,date,time,email\n');
     }
 
     fs.appendFile(filePath, row, (err) => {
