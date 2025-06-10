@@ -5,8 +5,9 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     console.log("==== Alexa POST Body ====");
-  console.dir(req.body, { depth: null }); // Full request log
-    const spokenText = req.body?.request?.intent?.slots?.query?.value;
+    console.dir(req.body, { depth: null }); // Full request log
+
+    const spokenText = req.body?.request?.intent?.slots?.utterance?.value; // FIXED THIS
     const sessionId = req.body?.session?.user?.userId || 'anonymous';
 
     console.log('Alexa said:', spokenText);
@@ -31,7 +32,6 @@ router.post('/', async (req, res) => {
         });
 
         const nluData = flaskResponse.data;
-
         let finalMessage = nluData.message;
 
         if (nluData.allRequiredParamsPresent) {
@@ -39,6 +39,7 @@ router.post('/', async (req, res) => {
                 intent: nluData.intent,
                 slots: nluData.slots
             });
+
             finalMessage = actionResponse.data.message;
         }
 
