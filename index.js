@@ -11,6 +11,7 @@ const updateAppointment=require('./routes/updateAppointment')
 const viewAppointment = require('./routes/viewAppointment');
 const detectIntent = require('./routes/detectIntent');
 const textToSpeech = require('./routes/textToSpeech');
+const alexaRouter = require('./routes/alexa');
 app.use(bodyParser.json());
 app.use('/detectIntent', detectIntent);
 app.use('/viewAppointment', viewAppointment);
@@ -18,6 +19,7 @@ app.use('/webhook', webhookHandler);
 app.use('/insertAppointment',insertAppointment)
 app.use('/deleteAppointment',deleteAppointment)
 app.use('/updateAppointment',updateAppointment)
+app.use('/alexa', alexaRouter);
 app.use('/synthesize', textToSpeech);
 app.use('/detectIntentCustomNLU', require('./routes/detectIntent_custom_nlu'));
 app.use('/handleAppointment', require('./routes/handleAppointment'));

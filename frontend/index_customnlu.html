@@ -75,7 +75,7 @@
         userText.textContent = transcript;
 
         try {
-          const response = await fetch('http://localhost:3000/detectIntentCustomNLU', {
+          const response = await fetch('https://poc-voiceassistedappointmentbookingupdated-production.up.railway.app/detectIntentCustomNLU', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: transcript })
