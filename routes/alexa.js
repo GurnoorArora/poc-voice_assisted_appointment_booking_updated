@@ -23,25 +23,23 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Send message to your NLU backend
-        const flaskResponse = await axios.post('https://your-flask-nlu.up.railway.app/nlu', {
+        const flaskResponse = await axios.post('https://hrb-nlu-production.up.railway.app/nlu', {
             text: spokenText,
             session_id: sessionId
         });
 
         const nluData = flaskResponse.data;
+
         let finalMessage = nluData.message;
 
-        // Optional: call action handler if all slots filled
         if (nluData.allRequiredParamsPresent) {
-            const actionResponse = await axios.post('https://your-node-backend.up.railway.app/handleAppointment', {
+            const actionResponse = await axios.post('http://localhost:3000/handleAppointment', {
                 intent: nluData.intent,
                 slots: nluData.slots
             });
             finalMessage = actionResponse.data.message;
         }
 
-        // Reply to Alexa
         return res.json({
             version: "1.0",
             response: {
@@ -60,7 +58,7 @@ router.post('/', async (req, res) => {
             response: {
                 outputSpeech: {
                     type: "PlainText",
-                    text: "Sorry, there was a problem processing your request."
+                    text: "Sorry, something went wrong."
                 },
                 shouldEndSession: true
             }
