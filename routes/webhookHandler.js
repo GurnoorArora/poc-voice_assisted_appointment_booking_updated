@@ -3,6 +3,10 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
+const {formatDate} = require('../utils/format_date');
+const {findAllAppointments}=require('../utils/appointments');
+const { deleteUserAppointments } = require('../utils/deleteAppointment');
+
 
 const filePath = path.join(__dirname, '../appointments.csv');
 
@@ -12,7 +16,7 @@ router.post('/', (req, res) => {
 
   // Only handle Insert Appointment for now
   if (intent === 'InsertAppointment') {
-    const { person, date, time } = params;
+    let { person, date, time } = params;
     const rawTime = time;
     const name = person.name;
 
@@ -43,10 +47,11 @@ router.post('/', (req, res) => {
           fulfillmentText: 'Failed to book the appointment. Please try again.',
         });
       }
-
+     let formatted_date=formatDate(date);
+      
       // Respond to Dialogflow
       res.json({
-        fulfillmentText: `Appointment booked for ${name} on ${date} at ${newtime}.`,
+        fulfillmentText: `Appointment booked for ${name} on ${formatted_date} at ${newtime}.`,
       });
 
       // Log the updated file for debugging
@@ -65,24 +70,87 @@ router.post('/', (req, res) => {
   
     // Filter for upcoming appointments
     const upcomingAppointments = appointments.filter(appointment => {
+
      return appointment.date >= today;
     });
-
+  
     let responseText;
 
     if (upcomingAppointments.length > 0) {
       responseText = "Here are your upcoming appointments:\n";
       upcomingAppointments.forEach(appointment => {
-        responseText += `- ${appointment.name} on ${appointment.date} at ${appointment.time}\n`;
+        let formatted_date = formatDate(appointment.date);
+        responseText += `- ${appointment.name} on ${formatted_date} at ${appointment.time}\n`;
      });
    } else {
       responseText = "You have no upcoming appointments.";
     }
-
+    
     return res.json({
      fulfillmentText: responseText,
     });
   }
+  else if (intent === 'deleteAppointment') {
+  const name = params['person']?.name;
+  const dateTime = params['date-time'];
+  const email = "johndoe@example.com"; // Simulated user identity
+  const result = deleteUserAppointments({ name, dateTime, email });
+  // If result.deleted is true, an appointment was removed — send confirmation
+  if (result.success && result.deleted) {
+    return res.json({
+      fulfillmentText: result.message
+    });
+  }
+
+  // If multiple appointments exist, store them in context for follow-up
+  if (result.success && !result.deleted) {
+    const userAppointments = result.message
+      .split('\n')
+      .slice(1, -1) // Extract just the numbered entries
+      .map(entry => {
+        const [index, rest] = entry.split('. ');
+        const [name, rest2] = rest.split(' on ');
+        const [date, time] = rest2.split(' at ');
+        return { name, date, time };
+      });
+
+    return res.json({
+      fulfillmentText: result.message,
+      outputContexts: [
+        {
+          name: `${req.body.session}/contexts/awaiting_delete_choice`,
+          lifespanCount: 2,
+          parameters: {
+            email,
+            options: userAppointments
+          }
+        }
+      ]
+    });
+  }
+
+  // Catch-all fallback
+  return res.json({
+    fulfillmentText: result.message
+  });
+}
+else if (intent === 'deleteAppointment-specific') {
+  const params = req.body.queryResult.parameters;
+  const contexts = req.body.queryResult.outputContexts;
+  console.log("Contexts:", contexts);
+  /*const context = contexts.find(c => c.name.endsWith('/contexts/awaiting_delete_choice'));
+
+  const selectedIndex = parseInt(params['ordinal'] || params['number']); // e.g., "second one" → 2
+  const email = context?.parameters?.email;
+
+  if (!email || !selectedIndex) {
+    return res.json({ fulfillmentText: "Sorry, I couldn't understand your selection." });
+  }
+
+  const result = deleteSpecificAppointment({ email, index: selectedIndex });*/
+
+  return res.json({ fulfillmentText: 'youre in delete specific' });
+}
 
 
   else {

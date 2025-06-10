@@ -1,6 +1,3 @@
-Name,Date,Time
-Alice,2025-05-23,10:00 AM
-Bob,2025-05-24,11:30 AM
-Charlie,2025-05-25,02:00 PM
-David,2025-05-26,09:00 AM
-Eve,2025-05-27,01:00 PM
+Name,Date,Time,Email
+John,2025-07-05,10:00 pm,johndoe@example.com
+
