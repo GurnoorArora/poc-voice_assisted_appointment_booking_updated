@@ -4,6 +4,8 @@ const axios = require('axios');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
+    console.log("==== Alexa POST Body ====");
+  console.dir(req.body, { depth: null }); // Full request log
     const spokenText = req.body?.request?.intent?.slots?.query?.value;
     const sessionId = req.body?.session?.user?.userId || 'anonymous';
 
