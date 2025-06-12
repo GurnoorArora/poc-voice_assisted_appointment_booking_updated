@@ -5,12 +5,27 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     console.log("==== Alexa POST Body ====");
-    console.dir(req.body, { depth: null }); // Full request log
+    console.dir(req.body, { depth: null });
 
-    const spokenText = req.body?.request?.intent?.slots?.utterance?.value; // FIXED THIS
+    const requestType = req.body?.request?.type;
     const sessionId = req.body?.session?.user?.userId || 'anonymous';
 
-    console.log('Alexa said:', spokenText);
+    // Handle LaunchRequest (e.g., "Alexa, open tax scheduler")
+    if (requestType === 'LaunchRequest') {
+        return res.json({
+            version: "1.0",
+            response: {
+                outputSpeech: {
+                    type: "PlainText",
+                    text: "Welcome to the tax scheduler. How can I assist you today?"
+                },
+                shouldEndSession: false
+            }
+        });
+    }
+
+    // Handle CatchAllIntent or fallback
+    const spokenText = req.body?.request?.intent?.slots?.utterance?.value;
 
     if (!spokenText) {
         return res.json({
@@ -25,6 +40,8 @@ router.post('/', async (req, res) => {
         });
     }
 
+    console.log('Alexa said:', spokenText);
+
     try {
         const flaskResponse = await axios.post('https://hrb-nlu-production.up.railway.app/nlu', {
             text: spokenText,
@@ -34,6 +51,7 @@ router.post('/', async (req, res) => {
         const nluData = flaskResponse.data;
         let finalMessage = nluData.message;
 
+        // If all required slots are filled, process action
         if (nluData.allRequiredParamsPresent) {
             const actionResponse = await axios.post('http://localhost:3000/handleAppointment', {
                 intent: nluData.intent,
