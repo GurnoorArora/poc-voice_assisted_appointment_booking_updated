@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
 
     if (intent === 'insertAppointment') {
         console.log('request body:', req.body);
-        const payload = req.body.bookingPayload;
+        const payload = req.body.booking_payload;
         console.log('Received booking payload:', payload);
 
         if (!payload) {
