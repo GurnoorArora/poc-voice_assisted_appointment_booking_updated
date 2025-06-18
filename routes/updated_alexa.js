@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
 
     try {
         // Step 1: Send to NLU
-        const flaskResponse = await axios.post('http://127.0.0.1:5000/nlu', {
+        const flaskResponse = await axios.post('https://hrb-nlu-production.up.railway.app/nlu', {
             text: spokenText,
             session_id: sessionId
         });
@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
 
         // Step 2: If all slots present, send to HRB API handler
         if (nluData.allRequiredParamsPresent) {
-            const actionResponse = await axios.post('http://localhost:3000/hrbApi', {
+            const actionResponse = await axios.post('https://poc-voiceassistedappointmentbookingupdated-production.up.railway.app/hrbApi', {
                 intent: nluData.intent,
                 bookingPayload: nluData.booking_payload
             });
