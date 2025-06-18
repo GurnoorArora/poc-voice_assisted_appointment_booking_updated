@@ -1,15 +1,14 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-
+NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 router.post('/', async (req, res) => {
     const userMessage = req.body.message;
     console.log('User message:', userMessage);
 
     try {
-
-        const flaskResponse = await axios.post('https://hrb-nlu-production.up.railway.app/nlu', {
+        const flaskResponse = await axios.post('http://127.0.0.1:5000/nlu', {
             text: userMessage,
             session_id: 'user123'
         });
@@ -17,12 +16,12 @@ router.post('/', async (req, res) => {
         const nluData = flaskResponse.data;
         console.log('NLU Response:', nluData);
 
-
         if (nluData.allRequiredParamsPresent) {
-            const actionResponse = await axios.post('http://localhost:3000/handleAppointment', {
+            const actionResponse = await axios.post('http://localhost:3000/hrbApi', {
                 intent: nluData.intent,
-                slots: nluData.slots
+                bookingPayload: nluData.booking_payload  // ✅ send pre-built payload
             });
+
             console.log('Action Response:', actionResponse.data);
 
             return res.json({
@@ -31,7 +30,6 @@ router.post('/', async (req, res) => {
                 slots: nluData.slots
             });
         }
-
 
         return res.json({
             reply: nluData.message,

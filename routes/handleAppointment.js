@@ -1,4 +1,7 @@
 const express = require('express');
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
